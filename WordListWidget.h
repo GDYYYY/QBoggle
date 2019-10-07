@@ -17,11 +17,15 @@ public:
     int score;
 signals:
     void exist();
+    void existflag();
     void notexist(QString newword);
+    void ifnew(QString newword);
 
 public slots:
     void ifNew(QString newword);
+    void ifrepeat(QString newword);
     void add(QString newword);
+    void ifnewword(QString newword);
 
 
 private:
