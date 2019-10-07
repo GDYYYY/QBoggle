@@ -10,9 +10,12 @@ class Cube : public QWidget
 public:
     explicit Cube(QWidget *parent = nullptr);
     void setLetter(QString l);
-    QString getLetter(){return label->text();};
+    QString getLetter(){return label->text();}
+    void mousePressEvent(QMouseEvent *event) override;
+    int numberOfThisCube;
 
 signals:
+    void click(int);
 
 public slots:
 
