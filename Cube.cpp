@@ -1,5 +1,5 @@
 #include "Cube.h"
-
+#include <QMouseEvent>
 #include <QHBoxLayout>
 
 Cube::Cube(QWidget *parent) : QWidget(parent)
@@ -22,4 +22,13 @@ Cube::Cube(QWidget *parent) : QWidget(parent)
 void Cube::setLetter(QString l)
 {
     label->setText(l);
+}
+
+void Cube::mousePressEvent(QMouseEvent *event)
+{
+    if(event->button()==Qt::LeftButton)
+    {
+        this->setStyleSheet("background-color: yellow; border-radius: 15px; border: 2px solid");
+    }
+    emit click(numberOfThisCube);
 }
