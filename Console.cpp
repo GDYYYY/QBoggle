@@ -30,7 +30,8 @@ void Console::keyPressEvent(QKeyEvent *event)
         cursor.movePosition(QTextCursor::End);
         cursor.select(QTextCursor::LineUnderCursor);
         QString lastLine = cursor.selectedText();
-        if(lastLine.length()==0) {write("Now, it's computer's turn."); emit TurnToComputer();}
+        lastLine=lastLine.toUpper();
+        if(lastLine.length()==0) {write("Now, it's computer's turn.\n"); emit TurnToComputer();}
         else if(lastLine.length()<4) {write("This word is too short!\n"); return;}
         else
         emit newLineWritten(lastLine);
@@ -63,4 +64,9 @@ void Console::end(bool ans)
 {
     if(ans) write("Computer wins! You are a loser.");
     else write("Unbelievable! You beat the computer! ");
+}
+
+void Console::warn()
+{
+    write("Please click legally!\n");
 }
