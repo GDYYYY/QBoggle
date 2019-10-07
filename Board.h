@@ -15,19 +15,27 @@ public:
     void shake();
     bool search(QString,int,int,int);
     bool checkAI(QString);
+    bool checkauto(QString);
     bool checkAIpre(QString);
-    bool consearch(QString,int,int);
+    void consearch(QString,int,int);
+    QString clickword;
+    int numOflastLetter=-1;
+    bool ifExistflag=false;
 
 signals:
     void find(QString);
     void notfind();
     void newLineWritten(QString newline);
     void CompareTheResult();
+    void illegalclick();
+    void newoneword(QString);
 
 public slots:
     void if_CanFind(QString);
     void ifExist();
     void computerTurn();
+    void check(int);
+
 
 private:
     int size;
@@ -35,8 +43,7 @@ private:
     bool flag[25]={0};
     Cube **cubes;
     QString *letters;
-    Lexicon *lex;
-    bool ifExistflag=false;
+    Lexicon *lex;   
     inline int index(int i, int j) { return i * size + j; }
     static const QString STANDARD_CUBES[16];
     static const QString BIG_BOGGLE_CUBES[25];
