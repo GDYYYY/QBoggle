@@ -27,6 +27,7 @@ Board::Board(QWidget *parent, int size, const QString *cubeLetters) : QWidget(pa
     qsrand(time(NULL));
     this->size = size;
     this->cubes = new Cube*[size * size];
+
     this->letters = new QString[size * size];
     for (int i = 0; i < size * size; ++i)
         this->letters[i] = cubeLetters[i];
@@ -52,6 +53,11 @@ Board::Board(QWidget *parent, int size, const QString *cubeLetters) : QWidget(pa
             else
             this->cubes[index(i, j)]->setLetter(this->letters[index(i, j)].at(x));
         }
+    }
+    for(int i=0;i<size*size;i++)
+    {
+        connect(cubes[i],SIGNAL(click(int)),this,SLOT(check(int)));
+        cubes[i]->numberOfThisCube=i;
     }
     // this->setStyleSheet("background-color:grey; border: 3px solid");
     h[0].x=-1;h[0].y=-1;
@@ -80,8 +86,7 @@ void Board::shake()
 {
 
         for(int i=0;i<size*size;i++)
-        swap(letters[i],letters[rand()%(i+1)]);
-
+           swap(letters[i],letters[rand()%(i+1)]);
     // Shake Cubes
 }
 
@@ -93,7 +98,8 @@ void Board::if_CanFind(QString word)
 
     for(int x=0;x<size*size;x++)
         cubes[x]->setStyleSheet("background-color: white; border-radius: 15px; border: 2px solid");
-
+    for(int i=0;i<25;i++)
+        flag[i]=0;
     for(int i=0;i<size*size;i++)
     {
         if(cubes[i]->getLetter()==word[0])
@@ -156,6 +162,8 @@ void Board::computerTurn()
     QString word;
     for(int i=0;i<size*size;i++)
     {
+        for(int j=0;j<25;j++)
+            flag[j]=0;
         word=word.left(0);
         count=0;
         word+=cubes[i]->getLetter();
@@ -172,15 +180,12 @@ void Board::computerTurn()
             y1=y+h[j].y;
             if(!(x1>=0&&x1<5&&y1>=0&&y1<5&&!flag[index(x1,y1)])) continue;
 
-            count++;
+            //count++;
 
             word+=cubes[index(x1,y1)]->getLetter();
-            if(word[count]=='Q') { count++;}
+            //if(word[count]=='Q') { count++;}
             if( checkAIpre(word))
-            {
                 consearch(word,x1,y1);
-
-            }
         }
     }
 
@@ -212,8 +217,9 @@ void Board::ifExist()
     ifExistflag=true;
 }
 
-bool Board::consearch(QString word,int x,int y)
+void Board::consearch(QString word,int x,int y)
 {
+    flag[index(x,y)]=1;
     checkAI(word);
     int x1,y1;
     for(int i=0;i<8;i++)
@@ -221,19 +227,65 @@ bool Board::consearch(QString word,int x,int y)
         x1=x+h[i].x;
         y1=y+h[i].y;
         QString word1;
-
         if(x1>=0&&x1<5&&y1>=0&&y1<5&&!flag[index(x1,y1)])
             word1=word+cubes[index(x1,y1)]->getLetter();
+        //q
         else continue;
-
         if(checkAIpre(word1))
-        {
-            flag[index(x1,y1)]=1;
-            if(consearch(word1,x1,y1)) return true;
-
-        }
-
+           consearch(word1,x1,y1);
     }
     flag[index(x,y)]=0;
-    return false;
+}
+
+void Board::check(int numofnow)
+{
+    QString letter=cubes[numofnow]->getLetter();
+    bool legalclick=false;
+    int x=numOflastLetter/size;
+    int y=numOflastLetter%size;
+    int x1,y1;
+    x1=numofnow/size;
+    y1=numofnow%size;
+    ifExistflag=false;
+
+    if(numOflastLetter==-1) {numOflastLetter=numofnow;legalclick=true;}
+    else {
+        for(int i=0;i<8;i++)
+        {
+            if(((x1+h[i].x)==x&&(y1+h[i].y)==y)||flag[index(x1,y1)])
+            {legalclick=true;break;}
+        }
+    }
+    if(!legalclick) {
+        cubes[numofnow]->setStyleSheet("background-color: white; border-radius: 15px; border: 2px solid");
+        emit illegalclick(); }
+    else if(flag[index(x1,y1)]) emit illegalclick();
+    else{
+    clickword+=letter;
+    numOflastLetter=numofnow;
+    flag[numofnow]=1;
+
+    if(!checkAIpre(clickword)||checkauto(clickword))
+    {
+        for(int i=0;i<size*size;i++)
+        {cubes[i]->setStyleSheet("background-color: white; border-radius: 15px; border: 2px solid");
+        flag[i]=0;}
+        clickword=clickword.left(0);
+        numOflastLetter=-1;
+    }
+    }
+}
+
+bool Board::checkauto(QString word)
+{
+    std::string str;
+    str=word.toStdString();
+    if(lex->contains(str)&&word.length()>3)
+    {
+       emit newoneword(word);
+        if(!ifExistflag)
+        return true;
+        else return false;
+    }
+    else return false;
 }
