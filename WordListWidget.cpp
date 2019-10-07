@@ -55,6 +55,15 @@ void WordListWidget::ifNew(QString word)
     for(int i=0;i<words.length();i++)
         if(words[i]==word) {emit exist(); flag=false; break;}
     if(flag) emit notexist(word);
+
+}
+void WordListWidget::ifrepeat(QString word)
+{
+    bool flag=true;
+    for(int i=0;i<words.length();i++)
+        if(words[i]==word) {flag=false; break;}
+    if(flag) emit ifnew(word);
+
 }
 void WordListWidget::add(QString word)
 {
@@ -64,3 +73,11 @@ void WordListWidget::add(QString word)
     headLayout->addWidget(scoreLabel, 0, Qt::AlignmentFlag::AlignRight);
 }
 
+void WordListWidget::ifnewword(QString word)
+{
+    bool flag=true;
+    for(int i=0;i<words.length();i++)
+        if(words[i]==word) {emit existflag(); flag=false; break;}
+    if(flag) add(word);
+
+}
