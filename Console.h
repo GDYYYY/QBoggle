@@ -23,6 +23,7 @@ public slots:
     void fail();
     void illegal();
     void end(bool);
+    void warn();
 protected:
     virtual void keyPressEvent(QKeyEvent *event) override;
 };
