@@ -23,13 +23,16 @@ BoggleWindow::BoggleWindow(QWidget *parent)
     connect(board,SIGNAL(find(QString)),console,SLOT(success()));
     connect(board,SIGNAL(notfind()),console,SLOT(fail()));
     connect(this,SIGNAL(illegalword()),console,SLOT(illegal()));
-    connect(board,SIGNAL(newLineWritten(QString)),computer,SLOT(ifNew(QString)));
+    connect(board,SIGNAL(newLineWritten(QString)),me,SLOT(ifrepeat(QString)));
+    connect(me,SIGNAL(ifnew(QString)),computer,SLOT(ifNew(QString)));
     connect(computer,SIGNAL(exist()),board,SLOT(ifExist()));
     connect(computer,SIGNAL(notexist(QString)),computer,SLOT(add(QString)));
     connect(board,SIGNAL(CompareTheResult()),this,SLOT(compare()));
     connect(this,SIGNAL(result(bool)),console,SLOT(end(bool)));
-   // connect(board,SIGNAL(checkAI(QString)),this,SLOT(AIcheck(QString)));
-  //  connect(this,SIGNAL(AIlegal()),board,SLOT(consearch()));
+    connect(board,SIGNAL(illegalclick()),console,SLOT(warn()));
+    connect(board,SIGNAL(newoneword(QString)),me,SLOT(ifnewword(QString)));
+    connect(me,SIGNAL(existflag()),board,SLOT(ifExist()));
+    //connect(me,SIGNAL(notexist(QString)),me,SLOT(add(QString)));
 
 
     me->setGeometry(20, 20, 230, 300);
