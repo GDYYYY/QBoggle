@@ -15,6 +15,7 @@ BoggleWindow::BoggleWindow(QWidget *parent)
     computer = new WordListWidget(this, "Computer");
     board = new Board(this);
     console = new Console(this);
+
     connect(console,SIGNAL(newLineWritten(QString)),me,SLOT(ifNew(QString)));
     connect(me,SIGNAL(exist()),console,SLOT(ifExist()));
     connect(this,SIGNAL(legalword(QString)),board,SLOT(if_CanFind(QString)));
@@ -32,6 +33,10 @@ BoggleWindow::BoggleWindow(QWidget *parent)
     connect(board,SIGNAL(illegalclick()),console,SLOT(warn()));
     connect(board,SIGNAL(newoneword(QString)),me,SLOT(ifnewword(QString)));
     connect(me,SIGNAL(existflag()),board,SLOT(ifExist()));
+    connect(&button,SIGNAL(clicked()),me,SLOT(resettable()));
+    connect(&button,SIGNAL(clicked()),computer,SLOT(resettable()));
+    connect(&button,SIGNAL(clicked()),console,SLOT(restart()));
+    connect(&button,SIGNAL(clicked()),board,SLOT(reshake()));
     //connect(me,SIGNAL(notexist(QString)),me,SLOT(add(QString)));
 
 
@@ -53,6 +58,12 @@ BoggleWindow::BoggleWindow(QWidget *parent)
     }
     */
     console->write("Welcome to the game Boggle!\n");
+
+    button.setText("RESTART");
+    button.setParent(this);
+    button.resize(80,30);
+    button.move(720,570);
+    button.show();
 }
 
 BoggleWindow::~BoggleWindow()
@@ -72,6 +83,14 @@ void BoggleWindow::compare()
 {
     emit result(computer->score > me->score);
 }
+
+/*void BoggleWindow::restart()
+{
+    me->resettable();
+    computer->resettable();
+    console->clear();
+    board->shake();
+}*/
 
 /*void BoggleWindow::AIcheck(QString word)
 {
